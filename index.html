@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luminos: The Adaptive Smart Lamp</title>
+    <!-- Load Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Three.js CDN for the 3D viewer -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* Custom font and base styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f7f7;
+        }
+        /* Custom styling for the 3D canvas container */
+        #canvas-container {
+            width: 100%;
+            height: 400px; /* Fixed height for the viewer */
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 1rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(135deg, #1f2937, #374151); /* Dark background for contrast */
+        }
+        /* Style for the interactive FAQ answers */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+        }
+        .faq-answer.open {
+            max-height: 300px; /* Arbitrary large value to allow content to show */
+        }
+        /* Custom style for range input track */
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #9ca3af;
+            height: 8px;
+            border-radius: 4px;
+        }
+        input[type="range"]::-moz-range-track {
+            background: #9ca3af;
+            height: 8px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-indigo-600">Luminos</h1>
+            <nav class="space-x-4">
+                <a href="#features" class="text-gray-600 hover:text-indigo-600 transition duration-300">Features</a>
+                <a href="#demo" class="text-gray-600 hover:text-indigo-600 transition duration-300">Demo</a>
+                <a href="#preorder" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-md">Pre-Order</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero" class="bg-indigo-700 text-white py-20 sm:py-32">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-4xl sm:text-6xl font-extrabold leading-tight mb-4">
+                    Light That Learns.
+                </h2>
+                <p class="text-xl sm:text-2xl font-light mb-8 max-w-3xl mx-auto">
+                    The Luminos Smart Lamp automatically adjusts color temperature and brightness to optimize your focus and well-being throughout the day.
+                </p>
+                <!-- Interactive Element 1: CTA Button (Scrolls to Form) -->
+                <a href="#preorder" class="inline-block bg-yellow-400 text-indigo-900 font-bold text-lg px-8 py-3 rounded-full shadow-2xl hover:bg-yellow-300 transform hover:scale-105 transition duration-300" aria-label="Pre-order the Luminos Smart Lamp now">
+                    Pre-Order Now - Save 20%
+                </a>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-16 sm:py-24 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h3 class="text-3xl font-bold text-center mb-12">Engineered for Human Performance</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    <!-- Feature 1 -->
+                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                        <div class="text-indigo-600 text-3xl mb-4">💡</div>
+                        <h4 class="text-xl font-semibold mb-2">Adaptive Spectrum</h4>
+                        <p class="text-gray-600">Mimics natural sunlight, shifting from warm amber to cool white to regulate your circadian rhythm.</p>
+                    </div>
+                    <!-- Feature 2 -->
+                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                        <div class="text-indigo-600 text-3xl mb-4">🧠</div>
+                        <h4 class="text-xl font-semibold mb-2">Focus Mode</h4>
+                        <p class="text-gray-600">Integrates with your calendar to automatically switch to high-concentration lighting during meetings or work blocks.</p>
+                    </div>
+                    <!-- Feature 3 -->
+                    <div class="p-6 bg-gray-50 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+                        <div class="text-indigo-600 text-3xl mb-4">📱</div>
+                        <h4 class="text-xl font-semibold mb-2">App & Voice Control</h4>
+                        <p class="text-gray-600">Control all settings via the companion app or integrate with Alexa, Google Home, and Apple HomeKit.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3D Demo Section -->
+        <section id="demo" class="py-16 sm:py-24 bg-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h3 class="text-3xl font-bold mb-4">Experience Luminos in 3D</h3>
+                <p class="text-gray-600 mb-8">Click and drag to rotate the lamp. Use the controls below to customize.</p>
+
+                <!-- Interactive Element 2: 3D Model Viewer (Rotation) -->
+                <div id="canvas-container" class="mb-8">
+                    <!-- Three.js canvas will be injected here -->
+                </div>
+
+                <div class="max-w-2xl mx-auto">
+                    <!-- Interactive Element 3: Brightness Slider -->
+                    <div class="mb-8 p-4 bg-white rounded-lg shadow-md border border-gray-200">
+                        <label for="brightness-slider" class="block text-left text-lg font-semibold mb-2">
+                            Adjust Brightness (<span id="brightness-value">50%</span>)
+                        </label>
+                        <input type="range" id="brightness-slider" min="1" max="100" value="50" oninput="changeBrightness(this.value)" 
+                               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer range-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">
+                    </div>
+
+                    <!-- Interactive Element 4: Color Picker -->
+                    <div class="flex justify-center space-x-4 mb-12">
+                        <button onclick="changeLampColor('#374151')" class="w-12 h-12 rounded-full bg-gray-700 shadow-md ring-2 ring-transparent hover:ring-indigo-500 transition duration-200" aria-label="Select Graphite Black color"></button>
+                        <button onclick="changeLampColor('#d1d5db')" class="w-12 h-12 rounded-full bg-gray-300 shadow-md ring-2 ring-transparent hover:ring-indigo-500 transition duration-200" aria-label="Select Cloud Silver color"></button>
+                        <button onclick="changeLampColor('#facc15')" class="w-12 h-12 rounded-full bg-yellow-400 shadow-md ring-2 ring-transparent hover:ring-indigo-500 transition duration-200" aria-label="Select Gold color"></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="py-16 bg-white">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h3 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h3>
+                
+                <!-- FAQ Item 1 (Interactive Element 5) -->
+                <div class="border-b border-gray-200 py-4">
+                    <button onclick="toggleFaq(1)" class="flex justify-between items-center w-full text-left font-semibold text-xl focus:outline-none" aria-expanded="false" aria-controls="faq-answer-1" id="faq-question-1">
+                        How does the adaptive lighting work?
+                        <span id="faq-icon-1" class="text-indigo-600 text-2xl transform transition-transform duration-300">+</span>
+                    </button>
+                    <div id="faq-answer-1" class="faq-answer" role="region" aria-labelledby="faq-question-1">
+                        <p class="pt-3 text-gray-700">The Luminos utilizes sensors and time-of-day data to dynamically adjust its color temperature (from 2200K to 6500K) and brightness. It delivers warm light in the morning and evening, transitioning to cool, bright light during peak working hours to naturally boost alertness.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 (Interactive Element 6) -->
+                <div class="border-b border-gray-200 py-4">
+                    <button onclick="toggleFaq(2)" class="flex justify-between items-center w-full text-left font-semibold text-xl focus:outline-none" aria-expanded="false" aria-controls="faq-answer-2" id="faq-question-2">
+                        What smart home platforms are supported?
+                        <span id="faq-icon-2" class="text-indigo-600 text-2xl transform transition-transform duration-300">+</span>
+                    </button>
+                    <div id="faq-answer-2" class="faq-answer" role="region" aria-labelledby="faq-question-2">
+                        <p class="pt-3 text-gray-700">Luminos offers native integration with Google Home, Amazon Alexa, and Apple HomeKit, allowing for voice control and integration into routines and scenes. It connects over standard 2.4GHz Wi-Fi.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 (Interactive Element 7) -->
+                <div class="border-b border-gray-200 py-4">
+                    <button onclick="toggleFaq(3)" class="flex justify-between items-center w-full text-left font-semibold text-xl focus:outline-none" aria-expanded="false" aria-controls="faq-answer-3" id="faq-question-3">
+                        When will Luminos ship?
+                        <span id="faq-icon-3" class="text-indigo-600 text-2xl transform transition-transform duration-300">+</span>
+                    </button>
+                    <div id="faq-answer-3" class="faq-answer" role="region" aria-labelledby="faq-question-3">
+                        <p class="pt-3 text-gray-700">Pre-orders placed today are expected to ship in late Q1 2026. You will receive a tracking number and shipping confirmation email as soon as your unit leaves our fulfillment center.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Pre-Order/CTA Form -->
+        <section id="preorder" class="py-16 sm:py-24 bg-indigo-600 text-white">
+            <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h3 class="text-3xl font-bold mb-4">Secure Your Luminos Today</h3>
+                <p class="mb-8 font-light">Pre-order now to secure a 20% discount off the retail price ($199 vs $249).</p>
+
+                <form id="preorder-form" class="space-y-4 bg-white p-6 rounded-xl shadow-2xl text-gray-800">
+                    <div>
+                        <input type="text" placeholder="Full Name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <input type="email" placeholder="Email Address" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <select required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="" disabled selected>Select Lamp Finish</option>
+                            <option value="graphite">Graphite Black</option>
+                            <option value="silver">Cloud Silver</option>
+                            <option value="gold">Sunrise Gold</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-yellow-400 text-indigo-900 font-bold text-lg px-8 py-3 rounded-lg hover:bg-yellow-300 transition duration-300 shadow-md">
+                        Complete Pre-Order ($199)
+                    </button>
+                    <!-- Form Submission Message Box (Non-alert) -->
+                    <div id="message-box" class="hidden mt-4 p-3 rounded-lg text-sm font-medium bg-green-100 text-green-700" role="alert"></div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2025 Luminos. All rights reserved. | <a href="#" class="hover:text-indigo-400">Privacy Policy</a></p>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactions -->
+    <script>
+        // Global variables for the 3D scene
+        let lampMaterial;
+        let ambientLight;
+
+        // --- 3D Viewer Setup (Interactive Element 2: Rotation) ---
+        function initThreeJS() {
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+
+            // 1. Scene setup
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // 2. Lighting
+            // Ambient light is needed for overall scene brightness (controlled by slider)
+            ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Default intensity 0.5 (50%)
+            scene.add(ambientLight);
+            
+            // Directional light provides shadows and depth (static)
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 3);
+            directionalLight.position.set(5, 5, 5).normalize();
+            scene.add(directionalLight);
+
+            // 3. Simple Lamp Geometry (Placeholder for a complex model)
+            const baseGeometry = new THREE.CylinderGeometry(0.5, 0.7, 0.2, 32);
+            lampMaterial = new THREE.MeshPhongMaterial({ color: 0x374151 }); // Graphite Black default
+            
+            const lampBase = new THREE.Mesh(baseGeometry, lampMaterial);
+            lampBase.position.y = -0.5;
+
+            const armGeometry = new THREE.BoxGeometry(0.2, 2, 0.2);
+            const lampArm = new THREE.Mesh(armGeometry, lampMaterial);
+            lampArm.position.y = 0.5;
+
+            const headGeometry = new THREE.CylinderGeometry(0.6, 0.6, 0.3, 32);
+            const lampHead = new THREE.Mesh(headGeometry, lampMaterial);
+            lampHead.position.y = 1.6;
+
+            const lampGroup = new THREE.Group();
+            lampGroup.add(lampBase);
+            lampGroup.add(lampArm);
+            lampGroup.add(lampHead);
+            scene.add(lampGroup);
+
+            camera.position.z = 3;
+
+            // 4. Animation Loop
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // 5. Interaction (Mouse/Touch Rotation)
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            function onPointerDown(event) {
+                isDragging = true;
+                previousMousePosition.x = event.clientX || event.touches[0].clientX;
+                previousMousePosition.y = event.clientY || event.touches[0].clientY;
+            }
+
+            function onPointerMove(event) {
+                if (!isDragging) return;
+
+                const clientX = event.clientX || event.touches[0].clientX;
+                const clientY = event.clientY || event.touches[0].clientY;
+
+                const deltaX = clientX - previousMousePosition.x;
+                const deltaY = clientY - previousMousePosition.y;
+
+                // Rotate around Y-axis based on horizontal movement
+                lampGroup.rotation.y += deltaX * 0.01;
+
+                previousMousePosition.x = clientX;
+                previousMousePosition.y = clientY;
+            }
+
+            function onPointerUp() {
+                isDragging = false;
+            }
+            
+            // Add listeners for mouse and touch (for responsiveness/touchscreens)
+            renderer.domElement.addEventListener('mousedown', onPointerDown, false);
+            renderer.domElement.addEventListener('mousemove', onPointerMove, false);
+            renderer.domElement.addEventListener('mouseup', onPointerUp, false);
+            
+            renderer.domElement.addEventListener('touchstart', onPointerDown, false);
+            renderer.domElement.addEventListener('touchmove', onPointerMove, false);
+            renderer.domElement.addEventListener('touchend', onPointerUp, false);
+
+            // Handle resizing
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            // Expose the material globally for the color change function
+            window.lampMeshMaterial = lampMaterial;
+            window.ambientLight = ambientLight; // Expose ambient light for brightness control
+        }
+
+        // --- Interactive Element 3: Brightness Slider ---
+        window.changeBrightness = function(value) {
+            const intensity = value / 100; // Convert 1-100 range to 0.01-1.00
+            
+            if (window.ambientLight) {
+                // Update the ambient light intensity in the 3D scene
+                window.ambientLight.intensity = intensity;
+            }
+
+            // Update the display value on the page
+            document.getElementById('brightness-value').textContent = `${value}%`;
+        }
+
+        // --- Interactive Element 4: Color Change ---
+        window.changeLampColor = function(hexColor) {
+            if (window.lampMeshMaterial) {
+                // Update the color of the 3D model
+                window.lampMeshMaterial.color.set(hexColor);
+                
+                // Simple animation feedback: Pulse the body background slightly
+                document.body.classList.add('pulse-feedback');
+                setTimeout(() => {
+                    document.body.classList.remove('pulse-feedback');
+                }, 500);
+            }
+        }
+
+        // --- Interactive Elements 5, 6, 7: FAQ Toggle ---
+        window.toggleFaq = function(id) {
+            const answer = document.getElementById(`faq-answer-${id}`);
+            const icon = document.getElementById(`faq-icon-${id}`);
+            const question = document.getElementById(`faq-question-${id}`);
+            
+            const isOpen = answer.classList.toggle('open');
+            
+            // Update ARIA attributes for accessibility
+            question.setAttribute('aria-expanded', isOpen);
+
+            // Rotate the icon
+            if (isOpen) {
+                icon.style.transform = 'rotate(45deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        // --- Form Submission (Final Interactive Element) ---
+        document.getElementById('preorder-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const messageBox = document.getElementById('message-box');
+            
+            // Simulate a successful form submission
+            messageBox.textContent = 'Success! Your pre-order has been placed. Check your email for confirmation.';
+            messageBox.classList.remove('hidden', 'bg-red-100', 'text-red-700');
+            messageBox.classList.add('bg-green-100', 'text-green-700');
+            
+            // Clear the form fields after successful submission simulation
+            this.reset();
+        });
+
+
+        // Initialize the 3D scene on window load
+        window.onload = function() {
+            initThreeJS();
+        };
+
+    </script>
+
+</body>
+</html>
